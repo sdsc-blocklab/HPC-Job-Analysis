@@ -4,9 +4,11 @@ import "./SafeMath.sol";
 
 contract Job {
     address payable requestor;
+
     mapping (uint => uint256) dataInputs;
     mapping (uint => uint256) dataOutputs;
     mapping (uint => uint256) analyticSP;
+
     uint256 numDataInputs;
     uint256 numDataOutputs;
     uint256 numAnalyticSP;
@@ -50,11 +52,8 @@ contract Job {
     * @return either returns the input data if the index is valid otherwise 0
     */
     function getDataInput(uint index) public view returns(uint256) {
-        if(index < numDataInputs) {
-            return(dataInputs[index]);
-        } else {
-            return(0);
-        }
+        require(index < numDataInputs);
+        return(dataInputs[index]);
     }
 
 
@@ -71,11 +70,8 @@ contract Job {
     * @return integer of the output if the index is valid otherwise 0
     */
     function getDataOutput (uint _index) public view returns(uint256) {
-        if(_index < numDataOutputs) {
-            return(dataOutputs[_index]);
-        } else {
-            return(0);
-        }
+        require(_index < numDataOutputs);
+        return(dataOutputs[_index]);
     }
 
     /** @dev get an analyticSP
@@ -83,11 +79,8 @@ contract Job {
     * @return return the analyticSP if index is valid otherwise 0
     */
     function getAnalyticSP(uint _index) public view returns(uint256) {
-        if(_index < numAnalyticSP) {
-            return(analyticSP[_index]);
-        } else {
-            return(0);
-        }
+        require(_index < numAnalyticSP);
+        return(analyticSP[_index]);
     }
 
     /** @dev add data output
@@ -137,9 +130,8 @@ contract Job {
     * to the owner of the contract
     */
     function kill() public {
-        if (msg.sender == requestor) {
-            emit Killed(requestor);
-            selfdestruct(requestor);
-        }
+        require(msg.sender == requestor);
+        emit Killed(requestor);
+        selfdestruct(requestor);
     }
 }
