@@ -5,13 +5,16 @@ import "./SafeMath.sol";
 contract Job {
     address payable requestor;
 
-    mapping (uint => uint256) dataInputs;
-    mapping (uint => uint256) dataOutputs;
-    mapping (uint => uint256) analyticSP;
+
+    // How should the data inputs and outputs be stored?
+    mapping (bytes32 => address) dataInputs;
+    mapping (bytes32 => address) dataOutputs;
+    mapping (bytes32 => address) analyticSP;
 
     uint256 numDataInputs;
     uint256 numDataOutputs;
     uint256 numAnalyticSP;
+    
     string public jobName;
     string submittedDate;
     string finishedDate;
@@ -33,7 +36,7 @@ contract Job {
     }
 
     /** @dev gets the address of the instantiated contract
-     * @return the contract address 
+     * @return the contract address
      */
     function getAddress() public view returns(address) {
         return(address(this));
@@ -52,7 +55,7 @@ contract Job {
     * @return either returns the input data if the index is valid otherwise 0
     */
     function getDataInput(uint index) public view returns(uint256) {
-        require(index < numDataInputs);
+        require(index < numDataInputs, "Index is out of range of Data Input List");
         return(dataInputs[index]);
     }
 
@@ -70,7 +73,7 @@ contract Job {
     * @return integer of the output if the index is valid otherwise 0
     */
     function getDataOutput (uint _index) public view returns(uint256) {
-        require(_index < numDataOutputs);
+        require(_index < numDataOutputs, "Index is out of range of Data Output List");
         return(dataOutputs[_index]);
     }
 
@@ -79,7 +82,7 @@ contract Job {
     * @return return the analyticSP if index is valid otherwise 0
     */
     function getAnalyticSP(uint _index) public view returns(uint256) {
-        require(_index < numAnalyticSP);
+        require(_index < numAnalyticSP, "Index is out of range of Service Provider List");
         return(analyticSP[_index]);
     }
 
@@ -126,11 +129,11 @@ contract Job {
         return(jobName);
     }
 
-    /** @dev delete the instance of the contract and send the contract's balance 
+    /** @dev delete the instance of the contract and send the contract's balance
     * to the owner of the contract
     */
     function kill() public {
-        require(msg.sender == requestor);
+        require(msg.sender == requestor, "Sender is not the requestor");
         emit Killed(requestor);
         selfdestruct(requestor);
     }
