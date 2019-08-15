@@ -7,9 +7,22 @@ contract Job {
 
 
     // How should the data inputs and outputs be stored?
-    mapping (bytes32 => address) dataInputs;
-    mapping (bytes32 => address) dataOutputs;
-    mapping (bytes32 => address) analyticSP;
+
+
+
+    struct dataInputs {
+        string resoureName;
+        string userName;
+        bytes32 jobID;
+        uint256 startTime;
+    }
+
+    struct dataOutput {
+        string resoureName;
+        string userName;
+        bytes32 jobID;
+        uint256 endTime;
+    }
 
     uint256 numDataInputs;
     uint256 numDataOutputs;
@@ -83,15 +96,13 @@ contract Job {
     */
     function getAnalyticSP(uint _index) public view returns(uint256) {
         require(_index < numAnalyticSP, "Index is out of range of Service Provider List");
-        return(analyticSP[_index]);
     }
 
     /** @dev add data output
     * @param _outputAddr the address of the output
     */
     function addDataOutputs(uint256 _outputAddr) public {
-        dataOutputs[numDataOutputs] = _outputAddr;
-        numDataOutputs = numDataOutputs.add(1);
+
     }
 
     /** @dev assign a finished date to the job
