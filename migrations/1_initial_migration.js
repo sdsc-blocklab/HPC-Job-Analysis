@@ -5,5 +5,4 @@ const Job = artifacts.require("Job");
 module.exports = function(deployer) {
   deployer.deploy(Migrations);
   deployer.deploy(BlockLab);
-  deployer.deploy(Job);
 };

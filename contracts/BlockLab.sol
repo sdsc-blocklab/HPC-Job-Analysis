@@ -1,4 +1,5 @@
 pragma solidity ^0.5.2;
+pragma experimental ABIEncoderV2;
 
 import "./SafeMath.sol";
 import "./Job.sol";
@@ -9,6 +10,8 @@ contract BlockLab {
     address payable owner;
     uint256 numJobs;
     mapping (uint256 => Job) jobs;
+
+
     constructor () public {
         numJobs = 0;
         owner = msg.sender;
@@ -27,15 +30,12 @@ contract BlockLab {
         }
         return(true);
     }
-    /** @dev adds a job to the queue
-      * @param _requestor the address that is requesting the job
-      * @param _name of the job you are checking
-      * @param _date when the job is started
-      * @return res whether or not the name exists
-    */
-    function addJob(address payable _requestor, string memory _name, string memory _date) public returns(address res) {
+
+
+    function addJob(address payable _requestor, string memory _name, string memory _date, string memory _resourceName, string memory _userName) public returns(address res) {
         if(checkJobName(_name)) {
-            jobs[numJobs] = new Job(_requestor, _name, _date);
+            bytes32 jobID = keccak256(abi.encode(_requestor, _name, _date)); // Finish
+            jobs[numJobs] = new Job(_name, _resourceName, _userName, jobID, _requestor);
             numJobs = numJobs.add(1);
             return(address(jobs[numJobs.sub(1)]));
         } else {
@@ -82,12 +82,6 @@ contract BlockLab {
       * @return res a bool saying wether the deletion was sucessful or not
     */
     function killJob(uint256 _index) public returns(bool) {
-        if(_index < numJobs) {
-            jobs[_index].kill();
-            return(true);
-        } else {
-            return(false);
-        }
     }
 
     /** @dev kills the owner address
