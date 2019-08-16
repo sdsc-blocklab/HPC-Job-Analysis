@@ -34,7 +34,8 @@ contract Job {
         return(address(this));
     }
 
-    function addJobInfo(string memory _name, string memory _resourceName, string memory _userName, bytes32 _jobID, uint256 _startTime, address _requestor) public {
+    function addJobInfo(string memory _name, string memory _resourceName, string memory _userName, bytes32 _jobID,
+    uint256 _startTime, address _requestor) public {
         info.jobName = _name;
         info.resoureName = _resourceName;
         info.userName = _userName;

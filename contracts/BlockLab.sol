@@ -9,7 +9,8 @@ contract BlockLab {
     using SafeMath for uint256;
     address payable owner;
     uint256 numJobs;
-    mapping (uint256 => Job) jobs;
+    mapping (uint256 => address) jobs;
+    event JobCreated(address res);
 
 
     constructor () public {
@@ -17,27 +18,17 @@ contract BlockLab {
         owner = msg.sender;
     }
 
-      /** @dev checks the Job name.
-      * @param _name name of the job you are checking
-      * @return res whether or not the name exists
-      */
-    function checkJobName(string memory _name) private view returns(bool res) {
-        uint256 index;
-        for(index = 0; index < numJobs; index.add(1)) {
-            if(keccak256(abi.encode(jobs[index].getJobName())) == keccak256(abi.encode(_name))) {
-                return(false);
-            }
-        }
-        return(true);
-    }
 
 
-    function addJob(address payable _requestor, string memory _name, string memory _date, string memory _resourceName, string memory _userName) public returns(address res) {
-        if(checkJobName(_name)) {
-            bytes32 jobID = keccak256(abi.encode(_requestor, _name, _date)); // Finish
-            jobs[numJobs] = new Job(_name, _resourceName, _userName, jobID, _requestor);
+
+    function addJob(address payable _requestor, string memory _name, string memory _resourceName, string memory _userName) public returns(address res) {
+        if(true) {
+            bytes32 jobID = keccak256(abi.encode(_requestor, _name, now)); // Finish
+            Job newJob = new Job(_name, _resourceName, _userName, jobID, _requestor);
+            jobs[numJobs] = address(newJob);
             numJobs = numJobs.add(1);
-            return(address(jobs[numJobs.sub(1)]));
+            emit JobCreated(jobs[numJobs.sub(1)]);
+            return(jobs[numJobs.sub(1)]);
         } else {
             return(address(0x0));
         }
@@ -49,32 +40,17 @@ contract BlockLab {
     */
     function getJobAddress(uint256 _index) public view returns(address res) {
         if(_index < numJobs) {
-            return(jobs[_index].getAddress());
+            return(jobs[_index]);
         } else {
             return(address(0));
         }
-    }
-
-    /** @dev returns the index of an inputted job name
-      * @param _name of the job you are checking
-      * @return res the index of the job name specified
-    */
-    function findJobByName(string memory _name) public view returns(int256 res) {
-        uint256 index;
-
-        for(index = 0; index < numJobs; index = index.add(1)) {
-            if(keccak256(abi.encode(jobs[index].getJobName())) == keccak256(abi.encode(_name))) {
-                return(int256(index));
-            }
-        }
-        return(-1);
     }
 
     /** @dev gets total number of jobs
       * @return res number of jobs
     */
     function getNumJobs() public view returns(uint256 res) {
-        return(numJobs.sub(1));
+        return(numJobs);
     }
 
     /** @dev kills the job of a specific index
