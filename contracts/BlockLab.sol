@@ -12,16 +12,29 @@ contract BlockLab {
     mapping (uint256 => address) jobs;
     event JobCreated(address res);
 
+    mapping(address=>bool) allowedUsers;
 
     constructor () public {
         numJobs = 0;
         owner = msg.sender;
+        allowedUsers[owner] = true;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner,"User is not owner");
+        _;
+    }
 
+    function addUser (address user) public onlyOwner {
+        allowedUsers[user]=true;
+    }
 
+    modifier onlyUsers() {
+        require(allowedUsers[msg.sender],"User has no priveleges");
+        _;
+    }
 
-    function addJob(address payable _requestor, string memory _name, string memory _resourceName, string memory _userName) public returns(address res) {
+    function addJob(address payable _requestor, string memory _name, string memory _resourceName, string memory _userName) public onlyUsers returns(address res) {
         if(true) {
             bytes32 jobID = keccak256(abi.encode(_requestor, _name, now)); // Finish
             Job newJob = new Job(_name, _resourceName, _userName, jobID, _requestor);
@@ -51,20 +64,5 @@ contract BlockLab {
     */
     function getNumJobs() public view returns(uint256 res) {
         return(numJobs);
-    }
-
-    /** @dev kills the job of a specific index
-      * @param _index the index of the job
-      * @return res a bool saying wether the deletion was sucessful or not
-    */
-    function killJob(uint256 _index) public returns(bool) {
-    }
-
-    /** @dev kills the owner address
-    */
-    function kill() public {
-        if (msg.sender == owner) {
-            selfdestruct(owner);
-        }
     }
 }

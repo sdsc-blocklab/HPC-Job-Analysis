@@ -1,6 +1,8 @@
 const BlockLab = artifacts.require("BlockLab");
 const Job = artifacts.require("Job");
 
+const ERROR_MSG = 'VM Exception while processing transaction: revert';
+
 // Set up your variables
 let blocklabInstance;
 let jobContract;
@@ -22,13 +24,40 @@ contract('BlockLab', (accounts) => {
         const blocklabInstance = await BlockLab.deployed();
 		const numJobs = await blocklabInstance.getNumJobs();
 		assert.equal(numJobs,0,"There should be no jobs active here");
-    });
+	});
+	
+	it('Users only added by owner', async () => {
+		const blocklabInstance = await BlockLab.deployed();
+
+		let err = null;
+		try {
+			await blocklabInstance.addUser(accounts[0],{from: accounts[2]});
+		} catch (error){
+			err = error;
+			assert.ok(err instanceof Error);
+		}
+	});
       
-    it('Add a Job to BlockLab', async () => {
+    it('Add a Job to BlockLab with verified user', async () => {
 		const blockLabInstance = await BlockLab.deployed();
+		await blockLabInstance.addUser(accounts[0]);
 		await blockLabInstance.addJob(accounts[0],"a job","sdsc","atmartorana");
 		const numJobs = await blockLabInstance.getNumJobs();
 		assert.equal(numJobs,1,"There should be one active job here");
+	});
+
+	it('Add a Job to BlockLab with no verified user', async () => {
+		const blockLabInstance = await BlockLab.deployed();
+		
+		let err = null;
+		try {
+			await blockLabInstance.addJob(accounts[0],"a job","sdsc","atmartorana");
+		} catch (error){
+			err = error;
+			assert.ok(err instanceof Error);
+		}	
+		//const numJobs = await blockLabInstance.getNumJobs();
+		//assert.equal(numJobs,1,"There should be one active job here");
 	});
 
     it('Get the Job Address of the created Job', async () => {
