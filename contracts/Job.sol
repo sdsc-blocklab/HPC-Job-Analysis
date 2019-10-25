@@ -23,8 +23,8 @@ contract Job {
 
     event Killed(address requestor);
 
-    constructor (string memory _name, string memory _resourceName, string memory _userName, bytes32 _jobID, address _requestor) public {
-        addJobInfo(_name,_resourceName,_userName,_jobID,now,_requestor);
+    constructor (address _requestor, bytes32 _jobID, string memory _name, string memory _date) public {
+        addJobInfo(_requestor, _jobID, _name, _date);
     }
 
     /** @dev gets the address of the instantiated contract
@@ -34,13 +34,12 @@ contract Job {
         return(address(this));
     }
 
-    function addJobInfo(string memory _name, string memory _resourceName, string memory _userName, bytes32 _jobID,
-    uint256 _startTime, address _requestor) public {
+    function addJobInfo(address _requestor,  bytes32 _jobID, string memory _name, string memory _date) public {
         info.jobName = _name;
-        info.resoureName = _resourceName;
-        info.userName = _userName;
+        info.resoureName = "SDSC Comet";
+        //info.userName = _userName;
         info.jobID = _jobID;
-        info.startTime = _startTime;
+        info.startTime = _date;
         info.requestor = _requestor;
     }
 

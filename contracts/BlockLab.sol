@@ -18,13 +18,10 @@ contract BlockLab {
         owner = msg.sender;
     }
 
-
-
-
-    function addJob(address payable _requestor, string memory _name, string memory _resourceName, string memory _userName) public returns(address res) {
+    function addJob(address payable _requestor, string memory _name, string memory _date) public returns(address res) {
         if(true) {
-            bytes32 jobID = keccak256(abi.encode(_requestor, _name, now)); // Finish
-            Job newJob = new Job(_name, _resourceName, _userName, jobID, _requestor);
+            bytes32 jobID = keccak256(abi.encode(_requestor, _name, _date)); // Finish
+            Job newJob = new Job(_requestor, jobID, _name, _date);
             jobs[numJobs] = address(newJob);
             numJobs = numJobs.add(1);
             emit JobCreated(jobs[numJobs.sub(1)]);
